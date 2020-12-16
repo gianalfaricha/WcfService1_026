@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Data;
-using static WcfService1.InsertUser;
+using System.Data.SqlClient;
 
 namespace WcfService1
 {
@@ -17,40 +16,38 @@ namespace WcfService1
     {
         public string GetData(int value)
         {
-            return string.Format("You entered: (0)", value);
+            return string.Format("You entered: {0}", value);
         }
-
-
         public string Insert(InsertUser user)
         {
             string msg;
-            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=MyTestDB;Persist Security=True; User ID=sa;Password=Ghianalf07 ; Pooling=False");
+            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=CrudDB; Persist Security Info=True; User ID=sa; Password=Ghianalf07");
             con.Open();
-            SqlCommand cmd = new SqlCommand("Insert into UserTab (Name, Email) values(@Name, @Email)", con);
+            SqlCommand cmd = new SqlCommand("Insert into dbo.UserTab (Name, Email) values(@Name, @Email)", con);
             cmd.Parameters.AddWithValue("@Name", user.Name);
             cmd.Parameters.AddWithValue("@Email", user.Email);
 
-
             int g = cmd.ExecuteNonQuery();
-            if(g==1)
+            if (g == 1)
             {
-                msg = "Successfully Inserted";
+                msg = "Successfuly Inserted";
             }
             else
             {
                 msg = "Failed to Insert";
             }
             return msg;
+
         }
 
         public gettestdata GetInfo()
         {
             gettestdata g = new gettestdata();
-            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=MyTestDB;Persist Security=True; User ID=sa;Password=Ghianalf07 ; Pooling=False");
+            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=CrudDB; Persist Security Info=True; User ID=sa; Password=Ghianalf07");
             con.Open();
-            SqlCommand cmd = new SqlCommand("Select * from UserTab", con);
+            SqlCommand cmd = new SqlCommand("Select * from dbo.UserTab", con);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
+            DataTable dt = new DataTable("mytab");
             da.Fill(dt);
             g.usertab = dt;
             return g;
@@ -59,20 +56,20 @@ namespace WcfService1
         public string Update(UpdateUser u)
         {
             string Message = "";
-            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=MyTestDB;Persist Security=True; User ID=sa;Password=Ghianalf07 ; Pooling=False");
+            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=CrudDB; Persist Security Info=True; User ID=sa; Password=Ghianalf07");
             con.Open();
-            SqlCommand cmd = new SqlCommand("Update UserTab set Name = @Name, Email = @Email where UserID=@UserID", con);
+            SqlCommand cmd = new SqlCommand("Update dbo.UserTab set Name = @Name, Email = @Email where UserId= @UserId", con);
             cmd.Parameters.AddWithValue("@UserID", u.UID);
             cmd.Parameters.AddWithValue("@Name", u.Name);
             cmd.Parameters.AddWithValue("@Email", u.Email);
             int res = cmd.ExecuteNonQuery();
             if (res == 1)
             {
-                Message = "Succesfully Updated";
+                Message = "Successfuly Updated";
             }
             else
             {
-                Message = "Failed to Updated";
+                Message = "Failed to Update";
             }
             return Message;
         }
@@ -80,18 +77,18 @@ namespace WcfService1
         public string  Delete(DeleteUser d)
         {
             string msg = "";
-            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=MyTestDB;Persist Security=True; User ID=sa;Password=Ghianalf07 ; Pooling=False");
+            SqlConnection con = new SqlConnection("Data Source=LAPTOP-EH3OHBUA;Initial Catalog=CrudDB; Persist Security Info=True; User ID=sa; Password=Ghianalf07");
             con.Open();
-            SqlCommand cmd = new SqlCommand("delete UserTab where UserID = @UserID", con);
+            SqlCommand cmd = new SqlCommand("delete dbo.UserTab where UserId = @UserId", con);
             cmd.Parameters.AddWithValue("@UserID", d.UID);
             int res = cmd.ExecuteNonQuery();
             if (res == 1)
             {
-                msg = "Succesfully delete";
+                msg = "Successfully deleted";
             }
             else
             {
-                msg = "Failed to delete";
+                msg = "Failed to deleted";
             }
             return msg;
         }
